@@ -1,6 +1,7 @@
 package xyz.whysoarbh.bugetbaba.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import xyz.whysoarbh.bugetbaba.dto.ExpenseDTO;
@@ -82,6 +83,12 @@ public class ExpenseService {
         List<ExpenseEntity> list = expenseRepository.findByProfileIdAndDateBetweenAndNameContainingIgnoreCase(profile.getId(),startDate,endDate,keyword,sort);
         return list.stream().map(this::toDTO).toList();
     }
+    //Notification for expenses of each day
+    public List<ExpenseDTO> getExpensesForUserOnDate(Long profileId, LocalDate date) {
+        List<ExpenseEntity> list = expenseRepository.findByProfileIdAndDateWithCategory(profileId, date);
+        return list.stream().map(this::toDTO).toList();
+    }
+
 
     //  Helpers
     private ExpenseEntity toEntity(ExpenseDTO dto, ProfileEntity profile, CategoryEntity category) {
