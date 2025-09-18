@@ -39,7 +39,7 @@ public class ProfileService
         newProfile = profileRepository.save(newProfile);
 
         //send activation code
-        String activationLink = activationUrl+"/api/v1.0/activate?token=" + newProfile.getActivationCode();
+        String activationLink = activationUrl+"api/v1.0/activate?token=" + newProfile.getActivationCode();
         String subject = "Activate your Buget Baba Profile";
         String message = "Click on the following link to activate your account: "+activationLink;
         emailService.sendEmail(newProfile.getEmail(), subject, message);
