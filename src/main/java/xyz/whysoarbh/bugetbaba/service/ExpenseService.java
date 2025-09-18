@@ -9,6 +9,7 @@ import xyz.whysoarbh.bugetbaba.entity.ProfileEntity;
 import xyz.whysoarbh.bugetbaba.repository.CategoryRepository;
 import xyz.whysoarbh.bugetbaba.repository.ExpenseRepository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -60,7 +61,18 @@ public class ExpenseService {
         expenseRepository.delete(entity);
     }
 
-
+    //retrieve lastest 5 expenses
+    public List<ExpenseDTO> getLastest5ExpensesForCurrentUser() {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        List<ExpenseEntity>list=expenseRepository.findTop5ByProfileIdOrderByDateDesc(profile.getId());
+        return list.stream().map(this::toDTO).toList();
+    }
+    //Get total expenses
+    public BigDecimal getTotalExpenseForCurrentUser() {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        BigDecimal total = expenseRepository.findTotalExpenseByProfileId(profile.getId());
+        return total!=null ? total :BigDecimal.ZERO;
+    }
     //  Helpers
     private ExpenseEntity toEntity(ExpenseDTO dto, ProfileEntity profile, CategoryEntity category) {
         return ExpenseEntity.builder()

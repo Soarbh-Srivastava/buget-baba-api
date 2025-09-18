@@ -11,6 +11,7 @@ import xyz.whysoarbh.bugetbaba.entity.ProfileEntity;
 import xyz.whysoarbh.bugetbaba.repository.CategoryRepository;
 import xyz.whysoarbh.bugetbaba.repository.IncomeRepository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -64,6 +65,21 @@ public class IncomeService {
 
         incomeRepository.delete(entity);
     }
+
+    // Retrieve latest 5 incomes
+    public List<IncomeDTO> getLatest5IncomesForCurrentUser() {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        List<IncomeEntity> list = incomeRepository.findTop5ByProfileIdOrderByDateDesc(profile.getId());
+        return list.stream().map(this::toDTO).toList();
+    }
+
+    // Get total income
+    public BigDecimal getTotalIncomeForCurrentUser() {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        BigDecimal total = incomeRepository.findTotalIncomeByProfileId(profile.getId());
+        return total != null ? total : BigDecimal.ZERO;
+    }
+
 
     // --- Helper mappers ---
     private IncomeEntity toEntity(IncomeDTO dto, ProfileEntity profile, CategoryEntity category) {
