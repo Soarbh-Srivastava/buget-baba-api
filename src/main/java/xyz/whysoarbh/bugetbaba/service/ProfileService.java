@@ -1,6 +1,7 @@
 package xyz.whysoarbh.bugetbaba.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,13 +28,18 @@ public class ProfileService
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
+    @Value("${app.activation.url}")
+    private String activationUrl;
+
+
     public ProfileDTO registerProfile(ProfileDTO profileDTO)
     {
         ProfileEntity newProfile = toEntity(profileDTO);
         newProfile.setActivationCode(UUID.randomUUID().toString());
         newProfile = profileRepository.save(newProfile);
+
         //send activation code
-        String activationLink = "http://localhost:8084/api/v1.0/activate?token=" + newProfile.getActivationCode();
+        String activationLink = activationUrl+"/api/v1.0/activate?token=" + newProfile.getActivationCode();
         String subject = "Activate your Buget Baba Profile";
         String message = "Click on the following link to activate your account: "+activationLink;
         emailService.sendEmail(newProfile.getEmail(), subject, message);
@@ -100,7 +106,7 @@ public class ProfileService
 
         return ProfileDTO.builder()
                 .id(currentUser.getId())
-                .fullName(currentUser.getEmail())
+                .fullName(currentUser.getFullName())
                 .email(currentUser.getEmail())
                 .profileImageUrl(currentUser.getProfileImageUrl())
                 .createdAt(currentUser.getCreatedAt())
