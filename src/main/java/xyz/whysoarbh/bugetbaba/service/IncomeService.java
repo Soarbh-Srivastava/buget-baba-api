@@ -1,11 +1,14 @@
 package xyz.whysoarbh.bugetbaba.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import xyz.whysoarbh.bugetbaba.dto.ExpenseDTO;
 import xyz.whysoarbh.bugetbaba.dto.IncomeDTO;
 import xyz.whysoarbh.bugetbaba.entity.CategoryEntity;
+import xyz.whysoarbh.bugetbaba.entity.ExpenseEntity;
 import xyz.whysoarbh.bugetbaba.entity.IncomeEntity;
 import xyz.whysoarbh.bugetbaba.entity.ProfileEntity;
 import xyz.whysoarbh.bugetbaba.repository.CategoryRepository;
@@ -78,6 +81,14 @@ public class IncomeService {
         ProfileEntity profile = profileService.getCurrentProfile();
         BigDecimal total = incomeRepository.findTotalIncomeByProfileId(profile.getId());
         return total != null ? total : BigDecimal.ZERO;
+    }
+
+    //Filter income
+    public List<IncomeDTO> filterIncome(LocalDate startDate, LocalDate endDate, String keyword, Sort sort)
+    {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        List<IncomeEntity> list = incomeRepository.findByProfileIdAndDateBetweenAndNameContainingIgnoreCase(profile.getId(),startDate,endDate,keyword,sort);
+        return list.stream().map(this::toDTO).toList();
     }
 
 
