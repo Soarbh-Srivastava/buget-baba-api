@@ -36,4 +36,9 @@ public interface IncomeRepository extends JpaRepository<IncomeEntity, Long>
             LocalDate startDate,
             LocalDate endDate
     );
+    List<IncomeEntity> findByProfileId(Long profileId);
+
+    @Query("SELECT MAX(i.date) FROM IncomeEntity i WHERE i.profile.id = :profileId")
+    LocalDate findLastDateByProfileId(@Param("profileId") Long profileId);
+
 }

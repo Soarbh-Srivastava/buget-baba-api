@@ -41,6 +41,10 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity,Long>
     @Query("SELECT e FROM ExpenseEntity e JOIN FETCH e.category WHERE e.profile.id = :profileId AND e.date = :date")
     List<ExpenseEntity> findByProfileIdAndDateWithCategory(@Param("profileId") Long profileId,
                                                            @Param("date") LocalDate date);
+    List<ExpenseEntity> findByProfileId(Long profileId);
+
+    @Query("SELECT MAX(e.date) FROM ExpenseEntity e WHERE e.profile.id = :profileId")
+    LocalDate findLastDateByProfileId(@Param("profileId") Long profileId);
 
 }
 
