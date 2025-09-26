@@ -1,0 +1,17 @@
+name: Ping Azure App Service
+
+on:
+  schedule:
+    # Runs every day at 21:57 IST (16:27 UTC)
+    - cron: "27 16 * * *"
+    # Runs every day at 22:57 IST (17:27 UTC)
+    - cron: "27 17 * * *"
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Azure App Service
+        run: |
+          echo "Pinging Azure App Service endpoint..."
+          curl -s -o /dev/null -w "HTTP Status: %{http_code}\n" https://budget-baba-api-hpe5ehfmfbc5h3fa.eastus-01.azurewebsites.net/api/v1.0/health
